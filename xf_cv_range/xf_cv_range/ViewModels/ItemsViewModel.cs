@@ -11,7 +11,7 @@ using xf_cv_range.Views;
 
 namespace xf_cv_range.ViewModels
 {
-    public class Group : ObservableRangeCollection<Item>
+    public class Group : ObservableCollection<Item>
     {
         public string Header { get; set; }
     }
@@ -20,7 +20,7 @@ namespace xf_cv_range.ViewModels
     {
         private Item _selectedItem;
 
-        public ObservableRangeCollection<Group> Items { get; }
+        public ObservableCollection<Group> Items { get; }
         public Command LoadItemsCommand { get; }
         public Command AddItemCommand { get; }
         public Command<Item> ItemTapped { get; }
@@ -28,7 +28,7 @@ namespace xf_cv_range.ViewModels
         public ItemsViewModel()
         {
             Title = "Browse";
-            Items = new ObservableRangeCollection<Group>();
+            Items = new ObservableCollection<Group>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
 
             ItemTapped = new Command<Item>(OnItemSelected);
@@ -44,12 +44,11 @@ namespace xf_cv_range.ViewModels
             {
                 Items.Clear();
                 var items = await DataStore.GetItemsAsync(true);
-                Items.Add(new Group());
-                Items[0].AddRange(items);
-                //foreach (var item in items)
-                //{
-                //    Items.Add(item);
-                //}
+                var group = new Group();
+                Items.Add(group);
+                //group.AddRange(items);
+                foreach (var item in items)
+                    group.Add(item);
             }
             catch (Exception ex)
             {
